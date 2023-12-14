@@ -1,8 +1,8 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import { bookPriceUrl, openLibraryUrl } from '@ioc:Adonis/Core/Config'
 import * as ISBN from 'isbn3'
 import superagent from 'superagent'
 import Book from 'App/Models/Book'
+import { bookPriceUrl, openLibraryUrl } from 'Config/apiUrls'
 
 export default class BooksController {
   public async store({ request, response }: HttpContextContract) {
@@ -32,7 +32,7 @@ export default class BooksController {
       isbn_13: parsedIsbn.isbn13,
     })
 
-    if (!book || !title) {
+    if (!price || !title) {
       return response.accepted(book)
     }
 

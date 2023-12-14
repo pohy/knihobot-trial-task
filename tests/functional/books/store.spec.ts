@@ -16,12 +16,7 @@ const validIsbns = [
 ]
 const title = 'GPU Gems 3'
 
-test.group('POST /books validates ISBN', (group) => {
-  group.each.setup(() => {
-    mockGetBookPricePrice(false)
-    mockGetOpenLibraryBook(validIsbns)
-  })
-
+test.group('POST /books validates ISBN', () => {
   test('returns 400 on invalid ISBN', async ({ client }) => {
     const response = await client.post('/books').json({ isbn: '123' })
 
@@ -69,5 +64,71 @@ test.group('POST /books validates ISBN', (group) => {
   })
 })
 
+test.group('POST /books fetches price', () => {
+  test('returns null price when the price API did not find price', async ({ client }) => {
+    mockGetBookPricePrice(false)
+
+    const response = await client
+      .post('/books')
+      .json({ isbn: isbns.gpuGemsIsbn13, condition: 'new' })
+
+    response.assertBodyContains({ price_base: null })
+  })
+
+  test('returns same price for the same ISBN', async ({ client }) => {
+    mockGetBookPricePrice(true)
+
+    const response1 = await client
+      .post('/books')
+      .json({ isbn: isbns.gpuGemsIsbn13, condition: 'new' })
+    const response2 = await client
+      .post('/books')
+      .json({ isbn: isbns.gpuGemsIsbn13, condition: 'new' })
+
+    response1.assertBodyContains({ price_base: response2.body().price_base })
   })
 })
+
+test.group('POST /books with appropriate HTTP response when title or price is found or not', () => {
+  test('returns 202 when title is not found', async ({ client }) => {
+    mockGetOpenLibraryBook(validIsbns)
+
+    const response = await client
+      .post('/books')
+      .json({ isbn: isbns.gpuGemsIsbn13, condition: 'new' })
+
+    response.assertStatus(202)
+    response.assertBodyContains({
+      title: null,
+    })
+  })
+
+  test('returns 202 when price is not found', async ({ client }) => {
+    mockGetBookPricePrice(true)
+
+    const response = await client
+      .post('/books')
+      .json({ isbn: isbns.gpuGemsIsbn13, condition: 'new' })
+
+    response.assertStatus(202)
+    response.assertBodyContains({
+      price_base: null,
+      price_factored_by_condition: null,
+    })
+  })
+
+  test('returns 200 when title and price are found', async ({ client, assert }) => {
+    mockGetBookPricePrice(true)
+    mockGetOpenLibraryBook(validIsbns, title)
+
+    const response = await client
+      .post('/books')
+      .json({ isbn: isbns.gpuGemsIsbn13, condition: 'new' })
+    const body = response.body()
+
+    response.assertStatus(200)
+    assert.isAbove(body.price_base, 0)
+    assert.equal(body.title, title)
+  })
+})
+
