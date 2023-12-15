@@ -18,6 +18,7 @@ export default class Book {
   public condition: BookCondition
   public isbn_13: string
   public isbn_10: string // TODO: This can also be derived from isbn_13
+  // TODO: Maybe add getters for the derivable fields? :)
 }
 
 export type BookCondition = 'new' | 'as_new' | 'damaged'

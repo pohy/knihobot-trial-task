@@ -6,9 +6,13 @@ import { bookPriceUrl, openLibraryUrl } from 'Config/apiUrls'
 
 export default class BooksController {
   public async store({ request, response }: HttpContextContract) {
-    const parsedIsbn = ISBN.parse(request.input('isbn'))
+    // TODO: Validate schema
+
+    const queryIsbn = request.input('isbn')
+    const parsedIsbn = ISBN.parse(queryIsbn)
     if (!parsedIsbn) {
-      return response.badRequest({ error: 'Invalid ISBN' })
+      // TODO: Implement isbn validation as a custom validation rule
+      return response.badRequest({ error: `Invalid ISBN: '${queryIsbn}'` })
     }
 
     const price = await superagent
@@ -28,6 +32,7 @@ export default class BooksController {
       title,
       condition,
       price_base: price,
+      price_factored_by_condition: price ? price * Book.ConditionPriceFactor[condition] : null,
       isbn_10: parsedIsbn.isbn10,
       isbn_13: parsedIsbn.isbn13,
     })
