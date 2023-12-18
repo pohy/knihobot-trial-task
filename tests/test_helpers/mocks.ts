@@ -3,13 +3,14 @@ import { bookPriceUrl, openLibraryUrl } from 'Config/apiUrls'
 import * as ISBN from 'isbn3'
 import { faker } from '@faker-js/faker'
 
+// TODO: I think it would be more sensible to pass a desired price, instead of generating a random one
 export function mockGetBookPricePrice(bookFound = true) {
+  // TODO: How about implementing the "mock" endpoint inside the app which will fail randomly and return a random price.
+  //  And for the testing mock to be deterministic?
   return nock(bookPriceUrl)
     .get('/price')
     .query(true)
     .reply((uri, _) => {
-      console.log('uri', uri)
-      console.log('body', _)
       const [, search] = uri.split('?')
       if (!search) {
         return [400]
@@ -23,6 +24,8 @@ export function mockGetBookPricePrice(bookFound = true) {
 
       faker.seed(Number.parseInt(isbn13, 10))
 
+      // TODO: The requirement states that the API should fail half the time
+      //  But that's hard to test :))
       if (bookFound) {
         return [200, { price: faker.number.int({ min: 10, max: 5000 }) }]
       }
@@ -31,6 +34,8 @@ export function mockGetBookPricePrice(bookFound = true) {
 }
 
 export function mockGetOpenLibraryBook(isbns: string[], title?: string) {
+  // TODO: We would like to mock all calls to the external API
+  //  We either have to call this method before each test case, or make this mock persistent?
   return nock(openLibraryUrl)
     .get((uri) => isbns.some((isbn) => uri.includes(`/isbn/${isbn}.json`)))
     .reply(() => {

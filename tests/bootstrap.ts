@@ -8,6 +8,7 @@
 import type { Config } from '@japa/runner'
 import TestUtils from '@ioc:Adonis/Core/TestUtils'
 import { assert, runFailedTests, specReporter, apiClient } from '@japa/preset-adonis'
+import nock from 'nock'
 
 /*
 |--------------------------------------------------------------------------
@@ -64,6 +65,14 @@ export const runnerHooks: Pick<Required<Config>, 'setup' | 'teardown'> = {
 */
 export const configureSuite: Required<Config>['configureSuite'] = (suite) => {
   if (suite.name === 'functional') {
-    suite.setup(() => TestUtils.httpServer().start())
+    suite.setup(() => {
+      nock.disableNetConnect()
+      nock.enableNetConnect('0.0.0.0')
+      return TestUtils.httpServer().start()
+    })
+    suite.teardown(() => {
+      nock.cleanAll()
+      nock.enableNetConnect()
+    })
   }
 }
