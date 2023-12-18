@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker'
 
-// TODO: The generation algorithm is not reliable and sometimes fails. We should invest more time to make the algorithm correct.
+// TODO: The generation algorithm is not reliable and sometimes fails. We should invest more time to make the algorithm correct. I didn't want to spend more time fiddling with the algorithm. Took me long enough for now
 export function generateIsbn13() {
   const generatedIsbn = `978${faker.string.numeric(10)}`
   return makeGeneratedIsbnValid(generatedIsbn)
