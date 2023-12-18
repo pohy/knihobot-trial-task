@@ -1,5 +1,5 @@
 import { test } from '@japa/runner'
-import { generateIsbn13 } from '../../../test_helpers/isbn'
+import { generateIsbn13 } from '../../../../test_helpers/isbn'
 import { BookCondition } from 'App/Models/Book'
 
 test.group('POST /books condition', () => {

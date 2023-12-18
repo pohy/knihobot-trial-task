@@ -1,6 +1,6 @@
 import { test } from '@japa/runner'
-import { generateIsbn13 } from '../../../test_helpers/isbn'
-import { mockGetBookPricePrice, mockGetOpenLibraryBook } from '../../../test_helpers/mocks'
+import { generateIsbn13 } from '../../../../test_helpers/isbn'
+import { mockGetBookPricePrice, mockGetOpenLibraryBook } from '../../../../test_helpers/mocks'
 
 test.group('POST /books with appropriate HTTP response when title or price is found or not', () => {
   const title = 'GPU Gems 3'

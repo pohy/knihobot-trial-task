@@ -1,6 +1,6 @@
 import { test } from '@japa/runner'
-import { mockGetBookPricePrice, mockGetOpenLibraryBook } from '../../../test_helpers/mocks'
-import { generateIsbn13 } from '../../../test_helpers/isbn'
+import { mockGetBookPricePrice, mockGetOpenLibraryBook } from '../../../../test_helpers/mocks'
+import { generateIsbn13 } from '../../../../test_helpers/isbn'
 import { faker } from '@faker-js/faker'
 import Book, { BookCondition } from 'App/Models/Book'
 
