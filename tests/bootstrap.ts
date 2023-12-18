@@ -21,7 +21,7 @@ import nock from 'nock'
 | Feel free to remove existing plugins or add more.
 |
 */
-export const plugins: Required<Config>['plugins'] = [assert(), apiClient()]
+export const plugins: Required<Config>['plugins'] = [assert(), runFailedTests(), apiClient()]
 
 /*
 |--------------------------------------------------------------------------

@@ -1,18 +1,24 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import { schema } from '@ioc:Adonis/Core/Validator'
 import * as ISBN from 'isbn3'
 import superagent from 'superagent'
-import Book from 'App/Models/Book'
+import Book, { BookCondition } from 'App/Models/Book'
 import { bookPriceUrl, openLibraryUrl } from 'Config/apiUrls'
 
 export default class BooksController {
   public async store({ request, response }: HttpContextContract) {
-    // TODO: Validate schema
+    const storeBookSchema = schema.create({
+      isbn: schema.string(),
+      condition: schema.enum(Object.values(BookCondition)),
+    })
 
-    const queryIsbn = request.input('isbn')
-    const parsedIsbn = ISBN.parse(queryIsbn)
+    const { condition, isbn } = await request.validate({ schema: storeBookSchema })
+
+    const parsedIsbn = ISBN.parse(isbn)
     if (!parsedIsbn) {
-      // TODO: Implement isbn validation as a custom validation rule
-      return response.badRequest({ error: `Invalid ISBN: '${queryIsbn}'` })
+      // TODO: ISBN validation could be implemented as a custom validator
+      //  But at the same time, we want both ISBN10 and ISBN13 here, hence the inline validation/parsing
+      return response.unprocessableEntity({ error: `Invalid ISBN: '${isbn}'` })
     }
 
     const price = await superagent
@@ -25,8 +31,6 @@ export default class BooksController {
       .get(`${openLibraryUrl}/isbn/${parsedIsbn.isbn13}.json`)
       .then<string>((res) => res.body.title)
       .catch(() => null)
-
-    const condition = request.input('condition')
 
     const book = new Book({
       title,

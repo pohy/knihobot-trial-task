@@ -1,10 +1,6 @@
 import { faker } from '@faker-js/faker'
 
-function generateIsbn10() {
-  const generatedIsbn = faker.string.numeric(10)
-  return makeGeneratedIsbnValid(generatedIsbn)
-}
-
+// TODO: The generation algorithm is not reliable and sometimes fails. We should invest more time to make the algorithm correct.
 export function generateIsbn13() {
   const generatedIsbn = `978${faker.string.numeric(10)}`
   return makeGeneratedIsbnValid(generatedIsbn)

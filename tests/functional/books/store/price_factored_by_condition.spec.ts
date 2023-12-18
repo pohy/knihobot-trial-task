@@ -14,7 +14,7 @@ test.group('POST /books factors condition in book price', (group) => {
   })
 
   test('returns price factored by condition new', async ({ client }) => {
-    const condition: BookCondition = 'new'
+    const condition = BookCondition.new
     const response = await client.post('/books').json({ isbn, condition })
 
     response.assertBodyContains({
@@ -23,7 +23,7 @@ test.group('POST /books factors condition in book price', (group) => {
     })
   })
   test('returns price factored by condition as_new', async ({ client }) => {
-    const condition: BookCondition = 'as_new'
+    const condition = BookCondition.asNew
     const response = await client.post('/books').json({ isbn, condition })
 
     response.assertBodyContains({
@@ -33,7 +33,7 @@ test.group('POST /books factors condition in book price', (group) => {
   })
 
   test('returns price factored by condition damaged', async ({ client }) => {
-    const condition: BookCondition = 'damaged'
+    const condition = BookCondition.damaged
     const response = await client.post('/books').json({ isbn, condition })
 
     response.assertBodyContains({
